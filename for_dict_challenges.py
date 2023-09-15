@@ -12,6 +12,12 @@ students = [
     {'first_name': 'Маша'},
     {'first_name': 'Петя'},
 ]
+count_stud={}
+for student in students: #можно ли тут одним циклом обойтись?
+    count_stud.setdefault("".join(student.values()),students.count(student))
+for name,count in count_stud.items():
+    print(f"{name}: {count}") 
+    
 # ???
 
 
@@ -26,6 +32,16 @@ students = [
     {'first_name': 'Маша'},
     {'first_name': 'Оля'},
 ]
+count_stud={}
+for student in students:
+    for student in students: 
+        count_stud.setdefault("".join(student.values()),students.count(student))
+for k,v in count_stud.items():
+    if v==max(count_stud.values()):
+        print(f"Самое частое имя среди учеников: {k}")
+        break
+
+    
 # ???
 
 
@@ -51,6 +67,17 @@ school_students = [
         {'first_name': 'Саша'},
     ],
 ]
+
+
+for cl in school_students:
+    count_stud = {}
+    for student in cl:
+        for student in cl: 
+            count_stud.setdefault("".join(student.values()),cl.count(student))
+    for k,v in count_stud.items():
+        if v == max(count_stud.values()):
+            print(f"Самое частое имя в {school_students.index(cl)+1} классе: {k}")
+            break    
 # ???
 
 
@@ -72,6 +99,16 @@ is_male = {
     'Миша': True,
     'Даша': False,
 }
+for cl in school:
+    male=0
+    female=0
+    for name in cl['students']: 
+        if is_male["".join(name.values())] == True:
+            male+=1
+        else:
+            female+=1
+    print(f"Класс {cl['class']}: девочки {female}, мальчики {male}")
+    
 # ???
 
 
@@ -92,4 +129,25 @@ is_male = {
     'Миша': True,
 }
 # ???
+max_male=0
+max_female=0
+for cl in school:
+    male=0
+    female=0
+    for name in cl['students']: 
+        if is_male["".join(name.values())] == True:
+            male+=1
+        else:
+            female+=1
+    if max_male < male:
+        max_male = male
+    if max_female < female:
+        max_female = female
+    cl.setdefault('male',male)
+    cl.setdefault('female',female)
+for cl in school:
+    if cl['female'] == max_female:
+        print(f"Больше всего девочек в классе {cl['class']}")
+    if cl['male'] == max_male:
+        print(f"Больше всего мальчиков в классе {cl['class']}")
 
