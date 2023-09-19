@@ -1,3 +1,4 @@
+from collections import Counter
 # Задание 1
 # Дан список учеников, нужно посчитать количество повторений каждого имени ученика
 # Пример вывода:
@@ -12,10 +13,10 @@ students = [
     {'first_name': 'Маша'},
     {'first_name': 'Петя'},
 ]
-count_stud={}
-for student in students: #можно ли тут одним циклом обойтись?
-    count_stud.setdefault("".join(student.values()),students.count(student))
-for name,count in count_stud.items():
+count_stud = {}
+names = [student['first_name'] for student in students]
+ctr = Counter(names)
+for name,count in ctr.items():
     print(f"{name}: {count}") 
     
 # ???
@@ -34,12 +35,18 @@ students = [
 ]
 count_stud={}
 for student in students:
-    for student in students: 
-        count_stud.setdefault("".join(student.values()),students.count(student))
-for k,v in count_stud.items():
-    if v==max(count_stud.values()):
-        print(f"Самое частое имя среди учеников: {k}")
-        break
+    if student['first_name'] not in count_stud:
+        count_stud[student['first_name']] = 1
+    else:
+        count_stud[student['first_name']] += 1
+print(f"Самое частое имя среди учеников: {max(count_stud.keys(),key = count_stud.get)}")
+
+#     for student in students: 
+#         count_stud.setdefault("".join(student.values()),students.count(student))
+# for k,v in count_stud.items():
+#     if v==max(count_stud.values()):
+#         print(f"Самое частое имя среди учеников: {k}")
+#         break
 
     
 # ???
@@ -99,16 +106,20 @@ is_male = {
     'Миша': True,
     'Даша': False,
 }
-for cl in school:
-    male=0
-    female=0
-    for name in cl['students']: 
-        if is_male["".join(name.values())] == True:
-            male+=1
-        else:
-            female+=1
-    print(f"Класс {cl['class']}: девочки {female}, мальчики {male}")
+# for cl in school:
+#     male=0
+#     female=0
+#     for name in cl['students']: 
+#         if is_male["".join(name.values())] == True:
+#             male+=1
+#         else:
+#             female+=1
+#     print(f"Класс {cl['class']}: девочки {female}, мальчики {male}")
     
+for cl in school:
+    male = [name['first_name'] for name in cl['students'] if  is_male[name['first_name']]]
+    female = [name['first_name'] for name in cl['students'] if not is_male[name['first_name']]]
+    print(f"Класс {cl['class']}: девочки {len(female)}, мальчики {len(male)}")
 # ???
 
 
@@ -129,25 +140,32 @@ is_male = {
     'Миша': True,
 }
 # ???
-max_male=0
-max_female=0
-for cl in school:
-    male=0
-    female=0
-    for name in cl['students']: 
-        if is_male["".join(name.values())] == True:
-            male+=1
-        else:
-            female+=1
-    if max_male < male:
-        max_male = male
-    if max_female < female:
-        max_female = female
-    cl.setdefault('male',male)
-    cl.setdefault('female',female)
-for cl in school:
-    if cl['female'] == max_female:
-        print(f"Больше всего девочек в классе {cl['class']}")
-    if cl['male'] == max_male:
-        print(f"Больше всего мальчиков в классе {cl['class']}")
+# max_male=0
+# max_female=0
+# for cl in school:
+#     male=0
+#     female=0
+#     for name in cl['students']: 
+#         if is_male["".join(name.values())] == True:
+#             male+=1
+#         else:
+#             female+=1
+#     if max_male < male:
+#         max_male = male
+#     if max_female < female:
+#         max_female = female
+#     cl.setdefault('male',male)
+#     cl.setdefault('female',female)
+# for cl in school:
+#     if cl['female'] == max_female:
+#         print(f"Больше всего девочек в классе {cl['class']}")
+#     if cl['male'] == max_male:
+#         print(f"Больше всего мальчиков в классе {cl['class']}")
 
+for cl in school:
+    male = [name['first_name'] for name in cl['students'] if is_male[name['first_name']]]
+    female = [name['first_name'] for name in cl['students'] if not is_male[name['first_name']]]
+    if len(male) > len(female):
+        print(f"Больше всего мальчиков в {cl['class']}")
+    else:
+        print(f"Больше всего девочек в {cl['class']}")
