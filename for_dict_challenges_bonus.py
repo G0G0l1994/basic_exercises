@@ -77,40 +77,59 @@ def most_common_reply(history):
      return cnt.most_common(10)
 
 def unique_users_see(history):
-    lst = sorted([(user['sent_by'],len(set(user['seen_by']))) for user in history], key = lambda x: x[:][1], reverse= True)
-    max_count = lst[0][1]
-
-    return 'Больше всего уникальнх пользователей у :', set([id for id,cnt in lst if cnt == max_count])
+    dic_lst = {}
+    lst_2 = [user['sent_by'] for user in history]
+    
+    for cnt in lst_2:
+        if cnt  not in dic_lst:
+            dic_lst[cnt] = 1
+        else:
+            dic_lst[cnt] += 1
+    
+    max_count = max(dic_lst.values())
+    
+    unique_lst = [id for id,cnt in dic_lst.items() if cnt == max_count]
+    
+    return 'Больше всего уникальнх пользователей у :', *unique_lst
 
 def time_chat(history):
-    count_morning = 0
-    count_afternoon = 0
-    count_evening = 0
+    message_times = {'Утро' : 0, 
+                     'День' : 0, 
+                     'Вечер' : 0}
     
     for tm in history:
         if tm['sent_at'].hour < 12 :
-            count_morning += 1
+            message_times['Утро'] += 1
             
         elif  12 <= tm['sent_at'].hour < 18 :
-            count_afternoon += 1
+            message_times['День'] += 1
             
         else:
-            count_evening += 1
+            message_times['Вечер'] += 1
     
-    if max([count_morning, count_afternoon, count_evening]) == count_morning :        
-        return f"Больше всего сообщений утром"
+    most_active = max(message_times, key = message_times.get)
     
-    elif max([count_morning, count_afternoon, count_evening]) == count_afternoon:        
-        return "Больше всего сообщений днем"
-    
-    else:       
-        return "Больше всего сообщений вечером"
+    return most_active
 
 def most_common_reply(history):
-    lst = [users['reply_for'] for users in history if users['reply_for'] != None ]
-    count = Counter(lst)
-    max_count = count.most_common()[0][1]
-    return f'Самые длинные треды у :', *[id for id,cnt in count.most_common() if cnt == max_count] # не придумал, как раскрыть через ","
+    dict_lst = {}
+    
+    for messange in history:
+        reply_to = messange["reply_for"]
+        
+        if reply_to is None:
+            continue
+        
+        if reply_to in dict_lst:
+            dict_lst[reply_to] += 1
+        
+        else:
+            dict_lst[reply_to] = 1
+    
+    max_count = max(dict_lst.values())
+    
+    longest_start_message = [ message for message,cnt in dict_lst.items() if cnt == max_count]
+    return f'Самые длинные треды у сообщений:', *longest_start_message
     
     
 history = generate_chat_history()
@@ -118,7 +137,6 @@ history = generate_chat_history()
 
 
 if __name__ == "__main__":
-    # print(generate_chat_history())
     print(most_common_message(history))
     print(*unique_users_see(history))
     print(time_chat(history))
