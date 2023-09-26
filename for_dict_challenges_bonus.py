@@ -22,10 +22,10 @@ messages = [
 Установите библиотеку lorem, чтобы она работала.
 
 Нужно:
-1. Вывести айди пользователя, который написал больше всех сообщений.
-2. Вывести айди пользователя, на сообщения которого больше всего отвечали.
-3. Вывести айди пользователей, сообщения которых видело больше всего уникальных пользователей.
-4. Определить, когда в чате больше всего сообщений: утром (до 12 часов), днём (12-18 часов) или вечером (после 18 часов).
+1. Вывести айди пользователя, который написал больше всех сообщений. done
+2. Вывести айди пользователя, на сообщения которого больше всего отвечали. done
+3. Вывести айди пользователей, сообщения которых видело больше всего уникальных пользователей. done(?)
+4. Определить, когда в чате больше всего сообщений: утром (до 12 часов), днём (12-18 часов) или вечером (после 18 часов). done
 5. Вывести идентификаторы сообщений, который стали началом для самых длинных тредов (цепочек ответов).
 
 Весь код стоит разбить на логические части с помощью функций.
@@ -33,7 +33,7 @@ messages = [
 import random
 import uuid
 import datetime
-
+from collections import Counter
 import lorem
 
 
@@ -65,6 +65,79 @@ def generate_chat_history():
         })
     return messages
 
+def most_common_message(history):
+    lst = [user['sent_by'] for user in history]
+    cnt = Counter(lst)
+    return f"Больше всех сообщений у профиля {cnt.most_common(1)[0][0]}"
+
+def most_common_reply(history):
+     lst = sorted([user['sent_by'] for user in history if user['reply_for'] != None])
+     cnt = Counter(lst)
+     
+     return cnt.most_common(10)
+
+def unique_users_see(history):
+    dic_lst = {}
+    lst_2 = [user['sent_by'] for user in history]
+    
+    for cnt in lst_2:
+        if cnt  not in dic_lst:
+            dic_lst[cnt] = 1
+        else:
+            dic_lst[cnt] += 1
+    
+    max_count = max(dic_lst.values())
+    
+    unique_lst = [id for id,cnt in dic_lst.items() if cnt == max_count]
+    
+    return 'Больше всего уникальнх пользователей у :', *unique_lst
+
+def time_chat(history):
+    message_times = {'Утро' : 0, 
+                     'День' : 0, 
+                     'Вечер' : 0}
+    
+    for tm in history:
+        if tm['sent_at'].hour < 12 :
+            message_times['Утро'] += 1
+            
+        elif  12 <= tm['sent_at'].hour < 18 :
+            message_times['День'] += 1
+            
+        else:
+            message_times['Вечер'] += 1
+    
+    most_active = max(message_times, key = message_times.get)
+    
+    return most_active
+
+def most_common_reply(history):
+    dict_lst = {}
+    
+    for messange in history:
+        reply_to = messange["reply_for"]
+        
+        if reply_to is None:
+            continue
+        
+        if reply_to in dict_lst:
+            dict_lst[reply_to] += 1
+        
+        else:
+            dict_lst[reply_to] = 1
+    
+    max_count = max(dict_lst.values())
+    
+    longest_start_message = [ message for message,cnt in dict_lst.items() if cnt == max_count]
+    return f'Самые длинные треды у сообщений:', *longest_start_message
+    
+    
+history = generate_chat_history()
+
+
 
 if __name__ == "__main__":
-    print(generate_chat_history())
+    print(most_common_message(history))
+    print(*unique_users_see(history))
+    print(time_chat(history))
+    print(*most_common_reply(history))

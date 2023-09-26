@@ -1,3 +1,4 @@
+from collections import Counter
 # Задание 1
 # Дан список учеников, нужно посчитать количество повторений каждого имени ученика
 # Пример вывода:
@@ -12,6 +13,12 @@ students = [
     {'first_name': 'Маша'},
     {'first_name': 'Петя'},
 ]
+count_stud = {}
+names = [student['first_name'] for student in students]
+ctr = Counter(names)
+for name,count in ctr.items():
+    print(f"{name}: {count}") 
+    
 # ???
 
 
@@ -26,6 +33,16 @@ students = [
     {'first_name': 'Маша'},
     {'first_name': 'Оля'},
 ]
+count_stud={}
+for student in students:
+    if student['first_name'] not in count_stud:
+        count_stud[student['first_name']] = 1
+    else:
+        count_stud[student['first_name']] += 1
+print(f"Самое частое имя среди учеников: {max(count_stud.keys(),key = count_stud.get)}")
+
+
+    
 # ???
 
 
@@ -51,6 +68,17 @@ school_students = [
         {'first_name': 'Саша'},
     ],
 ]
+
+
+for cl in school_students:
+    count_stud = {}
+    for student in cl:
+        for student in cl: 
+            count_stud.setdefault("".join(student.values()),cl.count(student))
+    for k,v in count_stud.items():
+        if v == max(count_stud.values()):
+            print(f"Самое частое имя в {school_students.index(cl)+1} классе: {k}")
+            break    
 # ???
 
 
@@ -72,6 +100,11 @@ is_male = {
     'Миша': True,
     'Даша': False,
 }
+    
+for cl in school:
+    male = [name['first_name'] for name in cl['students'] if  is_male[name['first_name']]]
+    female = [name['first_name'] for name in cl['students'] if not is_male[name['first_name']]]
+    print(f"Класс {cl['class']}: девочки {len(female)}, мальчики {len(male)}")
 # ???
 
 
@@ -93,3 +126,11 @@ is_male = {
 }
 # ???
 
+
+for cl in school:
+    male = [name['first_name'] for name in cl['students'] if is_male[name['first_name']]]
+    female = [name['first_name'] for name in cl['students'] if not is_male[name['first_name']]]
+    if len(male) > len(female):
+        print(f"Больше всего мальчиков в {cl['class']}")
+    else:
+        print(f"Больше всего девочек в {cl['class']}")
